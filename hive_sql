@@ -1,0 +1,33 @@
+-- Run script on hive. Script selects and saves as csv text from tweets
+
+-- Define Structure for tweets in hive
+CREATE EXTERNAL TABLE tweets (
+   id BIGINT,
+   created_at STRING,
+   source STRING,
+   favorited BOOLEAN,
+   retweet_count INT,
+   retweeted_status STRUCT<
+      text:STRING,
+      `user`:STRUCT<screen_name:STRING,name:STRING>>,
+   entities STRUCT<
+      urls:ARRAY<STRUCT<expanded_url:STRING>>,
+      user_mentions:ARRAY<STRUCT<screen_name:STRING,name:STRING>>,
+      hashtags:ARRAY<STRUCT<text:STRING>>>,
+   text STRING,
+   `user` STRUCT<
+      screen_name:STRING,
+      name:STRING,
+      friends_count:INT,
+      followers_count:INT,
+      statuses_count:INT,
+      verified:BOOLEAN,
+      utc_offset:INT,
+      time_zone:STRING>,
+   in_reply_to_screen_name STRING
+)
+ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe'
+LOCATION '/user/flume/tweets';
+
+-- Extract Text form every tweet and store it in an output fiel.
+insert overwrite local directory '/tmp/hive_output' row format delimited fields terminated by ',' select text from tweets;

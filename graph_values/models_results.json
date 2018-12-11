@@ -1,0 +1,2 @@
+{"label_model1": "['does_talk_about_med_cond', 'does_talk_not_about_med_cond', 'ambiguous']", "data_model1": "[39579, 179529, 157752]",
+"label_model2": "['does_talk_about_med_cond', 'does_not_talk_about_med_cond', 'ambiguous']", "data_model2": "[194422, 182050, 388]"}

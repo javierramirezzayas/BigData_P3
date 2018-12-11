@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Top Trending Twitter</title>
+        <script src='static/chart.js'></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <style>
+            .button {
+              background-color: #4CAF50;
+              border: none;
+              color: white;
+              padding: 15px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              cursor: pointer;
+            }
+            .button:hover{
+              background-color: #2D6930;
+            }
+            .item {
+              width: 700px;
+              height: 500px;
+              row-gap: 50px;
+            }
+        </style>
+    </head>
+
+    <br>
+        <center>
+            <h1 id="top">CIIC5995: Big Data Analytics</h1>
+            <h1>Project 3: Sentiment Analysis for Tweets</h1>
+            <p>For this implementation a series of programs were made in order to analyze live tweets.</p>
+            <p>In this page you will find the graphs related with different analysis:</p>
+            <br>
+            <a href="#mod1" class="button">Model 1 for Sentiment Analysis</a>
+            <a href="#mod2" class="button">Model 2 for Sentiment Analysis</a>
+
+            <h2 id="mod1">Sentiment Analysis for Tweets (Model 1)</h2>
+            <div class="item">
+                <canvas id="chart_model1"></canvas>
+                <a href="#top" class="button">Go to top</a>
+            </div>
+
+            <h2 id="mod2">Sentiment Analysis for Tweets (Model 2)</h2>
+            <div class="item">
+                <canvas id="chart_model2"></canvas>
+                <a href="#top" class="button">Go to top</a>
+            </div>
+        </center>
+
+
+        <script>
+           var src_Labels_model1 = [];
+           var src_Data_model1 = [];
+           var src_Labels_model2 = [];
+           var src_Data_model2 = [];
+
+           var ctx = document.getElementById("chart_model1");
+           var myChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: [{% for item in labels %}
+                              "{{item}}",
+                             {% endfor %}],
+                    datasets: [{
+                        label: '# of Mentions',
+                        data: [{% for item in values %}
+                                  {{item}},
+                                {% endfor %}],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+           });
+           setInterval(function(){
+                $.getJSON('/refreshData', {
+                }, function(data) {
+                    src_Labels_model1 = data.m1Label;
+                    src_Data_model1 = data.m1Data;
+                });
+                myChart.data.labels = src_Labels_model1;
+                myChart.data.datasets[0].data = src_Data_model1;
+                myChart.update();
+           },1000);
+
+
+           var ctx2 = document.getElementById("chart_model2");
+           var myChart2 = new Chart(ctx2, {
+                type: 'horizontalBar',
+                data: {
+                    labels: [{% for item in labels %}
+                              "{{item}}",
+                             {% endfor %}],
+                    datasets: [{
+                        label: '# of Mentions',
+                        data: [{% for item in values %}
+                                  {{item}},
+                                {% endfor %}],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+           });
+            setInterval(function(){
+                $.getJSON('/refreshData', {
+                }, function(data) {
+                    src_Labels_model2 = data.m2Label;
+                    src_Data_model2 = data.m2Data;
+                });
+                myChart2.data.labels = src_Labels_model2;
+                myChart2.data.datasets[0].data = src_Data_model2;
+                myChart2.update();
+            },1000);
+        </script>
+
+
+    </body>
+</html>
